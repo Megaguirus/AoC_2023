@@ -66,7 +66,7 @@ pub mod part_2 {
                     if input[index..input.len()].starts_with(*key) {
                         first = *value;
                         break 'check_first;
-                    } 
+                    }
                 }
             }
         }
