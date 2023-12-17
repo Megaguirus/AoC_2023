@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::fs;
 /*
 todo:
@@ -25,4 +24,9 @@ fn main() {
     let d2_p1 =
         day_2::part_1::cube_conundrum(fs::read_to_string("src/txts/inputxt/day2_p1.txt").unwrap());
     println!("day 2 part 1: {d2_p1}");
+
+    let d2_p2 = day_2::part_2::cube_conundrum_2(
+        fs::read_to_string("src/txts/inputxt/day2_p2.txt").unwrap(),
+    );
+    println!("dat 2 part 2: {d2_p2}");
 }
