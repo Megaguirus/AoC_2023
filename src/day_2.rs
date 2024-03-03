@@ -12,10 +12,10 @@ pub mod part_1 {
             let balls = set.split(',');
             for ball in balls {
                 for (color, _count) in colors.iter() {
-                    if ball.contains(color) {
-                        if ball[1..3].trim().parse::<u32>().unwrap() > *colors.get(color).unwrap() {
-                            possibility = false;
-                        }
+                    if ball.contains(color)
+                        && ball[1..3].trim().parse::<u32>().unwrap() > *colors.get(color).unwrap()
+                    {
+                        possibility = false;
                     }
                 }
             }
@@ -109,24 +109,15 @@ pub mod part_2 {
             let items: Vec<&str> = items.split_whitespace().collect();
             let mut fields: (u32, u32, u32) = (0, 0, 0);
             for (index, item) in items.iter().enumerate() {
-                match item.parse::<u32>() {
-                    Ok(u) => {
-                        if items.get(index + 1).unwrap().contains("green") {
-                            if u > fields.0 {
-                                fields.0 = u;
-                            }
-                        } else if items.get(index + 1).unwrap().contains("red") {
-                            if u > fields.1 {
-                                fields.1 = u;
-                            }
-                        } else if items.get(index + 1).unwrap().contains("blue") {
-                            if u > fields.2 {
-                                fields.2 = u;
-                            }
-                        } //that entire match arm is really fucking stupid
-                    } //i'm sure there's a thousand ways to do this but better
-                    Err(_) => (),
-                }
+                if let Ok(u) = item.parse::<u32>() {
+                    if items.get(index + 1).unwrap().contains("green") && u > fields.0 {
+                        fields.0 = u;
+                    } else if items.get(index + 1).unwrap().contains("red") && u > fields.1 {
+                        fields.1 = u;
+                    } else if items.get(index + 1).unwrap().contains("blue") && u > fields.2 {
+                        fields.2 = u;
+                    } //that entire match arm is really fucking stupid
+                } //i'm sure there's a thousand ways to do this but better
             }
             Game {
                 green: fields.0,
@@ -134,7 +125,7 @@ pub mod part_2 {
                 blue: fields.2,
             }
         }
-    }//holy fucking did i write all of that and it worked first try without testing it in between even once ?? 
+    } //holy fucking did i write all of that and it worked first try without testing it in between even once ??
 
     #[test]
     fn test_game() {
@@ -178,7 +169,7 @@ pub mod part_2 {
                 blue: 2
             }
         );
-    } 
+    }
 
     pub fn cube_conundrum_2(content: String) -> u32 {
         let mut sum: u32 = 0;
@@ -190,6 +181,11 @@ pub mod part_2 {
 
     #[test]
     fn test_cube_conundrum_2() {
-        assert_eq!( cube_conundrum_2(std::fs::read_to_string("src/txts/testxt/test_cube_conundrum_2.txt").unwrap()),2286);
+        assert_eq!(
+            cube_conundrum_2(
+                std::fs::read_to_string("src/txts/testxt/test_cube_conundrum_2.txt").unwrap()
+            ),
+            2286
+        );
     }
 }
