@@ -1,9 +1,11 @@
 pub mod part_1 {
 
-    #[derive(Debug)]
     struct Number {
         value: usize,
         adjacents: Vec<char>,
+        // u need at least the starting index
+        // for i in 0..value.parse::<&str>().len() {tuples of indexes}
+        // iteration for checking indexes_pairs within *_adjacents is second item exlusive
     }
 
     impl Number {
@@ -76,6 +78,7 @@ pub mod part_1 {
                     for sub_vec in &v_indexes_pairs {
                         actual_indexs_pairs.push(sub_vec.iter().map(|x| x - 1).collect())
                     }
+                    println!("- {:?}", actual_indexs_pairs);
 
                     let neo_line = neo_line.chars().collect::<Vec<char>>();
                     let mut adjacents: Vec<Vec<char>> = vec![];
