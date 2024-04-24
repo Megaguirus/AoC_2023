@@ -183,7 +183,7 @@ pub mod part_2 {
     fn test_cube_conundrum_2() {
         assert_eq!(
             cube_conundrum_2(
-                std::fs::read_to_string("src/txts/testxt/test_cube_conundrum_2.txt").unwrap()
+                std::fs::read_to_string("src/txts/testxt/test_cube_conundrum.txt").unwrap()
             ),
             2286
         );
