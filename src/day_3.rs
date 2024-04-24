@@ -1,16 +1,33 @@
 pub mod part_1 {
-
     struct Number {
         value: usize,
         adjacents: Vec<char>,
-        // u need at least the starting index
-        // for i in 0..value.parse::<&str>().len() {tuples of indexes}
-        // iteration for checking indexes_pairs within *_adjacents is second item exlusive
+        span: Vec<usize>,
+        line_number: usize,
+        id: usize,
     }
 
     impl Number {
-        fn new(value: usize, adjacents: Vec<char>) -> Number {
-            Number { value, adjacents }
+        fn new(
+            value: usize,
+            adjacents: Vec<char>,
+            span: Vec<usize>,
+            line_number: usize,
+            id: usize,
+        ) -> Number {
+            Number {
+                value,
+                adjacents,
+                span,
+                line_number,
+                id,
+            }
+        }
+    }
+
+    impl PartialEq for Number {
+        fn eq(&self, other: &Self) -> bool {
+            self.line_number == other.line_number && self.id == other.id
         }
     }
 
@@ -33,7 +50,8 @@ pub mod part_1 {
                 .lines()
                 .map(|x| String::from(".") + x + ".")
                 .collect::<Vec<String>>();
-            for (line_number, line) in (self.content).lines().enumerate() {
+
+            for (line_number, line) in self.content.lines().enumerate() {
                 /*
                 "you don't have to solve every problem by creating a
                 new abstraction. not every problem is worth solving."
@@ -78,7 +96,6 @@ pub mod part_1 {
                     for sub_vec in &v_indexes_pairs {
                         actual_indexs_pairs.push(sub_vec.iter().map(|x| x - 1).collect())
                     }
-                    println!("- {:?}", actual_indexs_pairs);
 
                     let neo_line = neo_line.chars().collect::<Vec<char>>();
                     let mut adjacents: Vec<Vec<char>> = vec![];
@@ -117,9 +134,21 @@ pub mod part_1 {
                             };
                         }
 
+                        let mut span: Vec<usize> = vec![];
+
+                        for i in v_indexes_pairs[index][0]..v_indexes_pairs[index][1] {
+                            span.push(i);
+                        }
+
                         adjacents.push(v);
-                        self.numbers
-                            .push(Number::new(*value, adjacents[index].clone()));
+
+                        self.numbers.push(Number::new(
+                            *value,
+                            adjacents[index].clone(),
+                            span,
+                            line_number,
+                            index,
+                        ));
                     }
                 }
             }
@@ -137,7 +166,70 @@ pub mod part_1 {
             }
             sum
         }
+
+        pub fn gear_ratios_2(&mut self) -> usize {
+            let mut result: usize = 0;
+            //let place_holder = vec!['.'; 3];
+            let mut lines_as_chars: Vec<Vec<char>> = Vec::new();
+
+            for line in self.content.lines() {
+                lines_as_chars.push(line.chars().collect::<Vec<char>>());
+            }
+
+            for (line_number, line) in lines_as_chars.iter().enumerate() {
+                for (nm, ch) in line.iter().enumerate() {
+                    if *ch == '*' {
+                        let mut gears_pairs: Vec<&Number> = Vec::new();
+
+                        /*
+                        let block: Vec<&[char]> = vec![
+                            if line_number != 0 {
+                                &lines_as_chars.get(line_number - 1).unwrap()
+                                    [(nm - 1).max(0)..=(nm + 1).min(line.len() - 1)]
+                            } else {
+                                &place_holder
+                            },
+                            if line_number != lines_as_chars.len() - 1 {
+                                &lines_as_chars.get(line_number + 1).unwrap()
+                                    [(nm - 1).max(0)..=(nm + 1).min(line.len() - 1)]
+                            } else {
+                                &place_holder
+                            },
+                            &lines_as_chars.get(line_number).unwrap()
+                                [(nm - 1).max(0)..=(nm + 1).min(line.len() - 1)],
+                        ];
+
+                        print!(
+                            "\nblock number {nm} line number {line_number}: {:?} \n",
+                            block
+                        );
+                        */
+
+                        for number in self.numbers.iter().filter(|x| {
+                            x.line_number == line_number
+                                || x.line_number == (line_number + 1).min(line.len() - 1)
+                                || x.line_number == (line_number - 1).max(0)
+                        }) {
+                            for index in number.span.iter() {
+                                let index = *index as isize;
+                                let nm = nm as isize;
+                                if index - nm == 2 || index - nm == 1 || index == nm {
+                                    if !gears_pairs.contains(&number) {
+                                        gears_pairs.push(number);
+                                    }
+                                }
+                            }
+                        }
+                        if gears_pairs.len() == 2 {
+                            result += gears_pairs[0].value * gears_pairs[1].value;
+                        }
+                    }
+                }
+            }
+            result
+        }
     }
+
     pub mod fsa {
         enum State {
             Start,
@@ -213,5 +305,13 @@ pub mod part_1 {
             Multi::new(std::fs::read_to_string("src/txts/testxt/test_gear_ratios.txt").unwrap());
         multi.scan_edges();
         assert_eq!(4361, multi.gear_ratios());
+    }
+
+    #[test]
+    fn test_gear_ratios_2() {
+        let mut multi =
+            Multi::new(std::fs::read_to_string("src/txts/testxt/test_gear_ratios.txt").unwrap());
+        multi.scan_edges();
+        assert_eq!(467835, multi.gear_ratios_2());
     }
 }
